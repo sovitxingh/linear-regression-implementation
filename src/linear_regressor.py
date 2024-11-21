@@ -65,8 +65,8 @@ def compute_gradients(X, y, w, b, lambda_=0.0):
         Gradient of cost function with respect to bias.
     """
     m, n = X.shape
-    if m == 0:
-        return np.zeros(n), 0.0
+    if m == 0 or n == 0:
+        raise ValueError("Training set is empty. Please provide a non-empty dataset.")
 
     # Compute the error matrix of shape [m,]
     errors = (np.dot(X, w) + b) - y
