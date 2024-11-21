@@ -10,7 +10,7 @@ import copy
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
-def compute_cost(X, y, w, b, lambda_):
+def compute_cost(X, y, w, b, lambda_=0.0):
     """
     Compute the cost function for linear regression with L2 regularization.
     
@@ -25,14 +25,14 @@ def compute_cost(X, y, w, b, lambda_):
         Model parameter (bias).
     lambda_ : scalar
         Regularization factor.
-
+    
     Returns:
     total_cost: scalar 
         The total cost including the squared error cost and regularization cost.
     """
-    m, _ = X.shape
-    if m == 0:
-        return 0.0
+    m, n = X.shape
+    if m == 0 or n == 0:
+        raise ValueError("Training set is empty. Please provide a non-empty dataset.")
     
     # Cost without regularization
     unreg_cost = np.sum(((np.dot(X, w) + b) - y)**2) / (2 * m)
@@ -42,7 +42,7 @@ def compute_cost(X, y, w, b, lambda_):
     
     return unreg_cost + reg_cost
 
-def compute_gradients(X, y, w, b, lambda_):
+def compute_gradients(X, y, w, b, lambda_=0.0):
     """
     Compute the gradients for linear regression with L2 regularization.
     
@@ -77,7 +77,7 @@ def compute_gradients(X, y, w, b, lambda_):
     
     return dj_dw, dj_db
 
-def gradient_descent(X, y, w_in, b_in, alpha, num_iters, lambda_):
+def gradient_descent(X, y, w_in, b_in, alpha, num_iters, lambda_=0.0):
     """
     Perform gradient descent to learn the parameters for linear regression.
     
