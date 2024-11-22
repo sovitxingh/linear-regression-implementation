@@ -6,7 +6,7 @@ import os
 # Adding src directory to the system path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-from linear_regressor import compute_cost, compute_gradients
+from linear_regressor import compute_cost, compute_gradients, LinearRegressor
 
 @pytest.mark.parametrize(
     "X, y, w, b, lambda_, expected_cost", [
@@ -73,3 +73,30 @@ def test_compute_gradients_empty_dataset():
     lambda_ = 0.1
     with pytest.raises(ValueError, match="Training set is empty. Please provide a non-empty dataset."):
         compute_gradients(X, y, w, b, lambda_)
+
+@pytest.mark.parametrize(
+    "X_train, y_train, X_test, alpha_value, iters, expected_predictions", [
+        # Standard Case
+        (np.array([[1, 2], [3, 4], [5, 6]]), np.array([1, 2, 3]), 
+         np.array([[1, 2], [3, 4], [5, 6]]), 0.01, 1000,
+         np.array([1, 2, 3])),
+        
+        # Single Data Point Prediction
+        (np.array([[1, 2]]), np.array([1]), 
+         np.array([[1, 2]]), 0.01, 10000, 
+         np.array([1])),
+        
+        # Large Values Prediction
+        (np.array([[1000, 2000], [3000, 4000], [5000, 6000]]), np.array([1000, 2000, 3000]), 
+         np.array([[1000, 2000], [3000, 4000], [5000, 6000]]), 0.00000001, 100000,
+         np.array([1000, 2000, 3000])),
+    ]
+)
+def test_linear_regressor_predict(X_train, y_train, X_test, alpha_value, iters, expected_predictions):
+    regressor = LinearRegressor(alpha=alpha_value, num_iters=iters, lambda_=0.1)
+    regressor.fit(X_train, y_train)
+    
+    predictions = regressor.predict(X_test)
+    
+    assert np.allclose(predictions, expected_predictions, atol=1e-2), f"Expected predictions {expected_predictions}, but got {predictions}"
+

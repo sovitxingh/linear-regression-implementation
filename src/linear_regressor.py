@@ -34,10 +34,7 @@ def compute_cost(X, y, w, b, lambda_=0.0):
     if m == 0 or n == 0:
         raise ValueError("Training set is empty. Please provide a non-empty dataset.")
     
-    # Cost without regularization
     unreg_cost = np.sum(((np.dot(X, w) + b) - y)**2) / (2 * m)
-    
-    # Cost added by regularization (Ridge Regression)
     reg_cost = (lambda_ / (2 * m)) * np.sum(w**2)
     
     return unreg_cost + reg_cost
@@ -68,11 +65,8 @@ def compute_gradients(X, y, w, b, lambda_=0.0):
     if m == 0 or n == 0:
         raise ValueError("Training set is empty. Please provide a non-empty dataset.")
 
-    # Compute the error matrix of shape [m,]
     errors = (np.dot(X, w) + b) - y
-    
-    # Compute gradients
-    dj_dw = np.sum(errors.reshape(-1, 1) * X, axis=0) / m + (lambda_ / m) * w
+    dj_dw = (1 / m) * (X.T @ errors + lambda_ * w)
     dj_db = np.sum(errors) / m
     
     return dj_dw, dj_db
@@ -111,8 +105,8 @@ def gradient_descent(X, y, w_in, b_in, alpha, num_iters, lambda_=0.0):
 
     for i in range(num_iters):
         dj_dw, dj_db = compute_gradients(X, y, w, b, lambda_)
-        b = b - alpha * dj_db
-        w = w - alpha * dj_dw
+        b -= alpha * dj_db
+        w -= alpha * dj_dw
 
         if i % (num_iters // 10) == 0:
             J_history.append(compute_cost(X, y, w, b, lambda_))
