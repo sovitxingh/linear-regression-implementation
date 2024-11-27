@@ -100,3 +100,6 @@ def test_linear_regressor_predict(X_train, y_train, X_test, alpha_value, iters, 
     
     assert np.allclose(predictions, expected_predictions, atol=1e-2), f"Expected predictions {expected_predictions}, but got {predictions}"
 
+if __name__ == "__main__": 
+    # Run the tests when the script is executed directly
+    pytest.main()
